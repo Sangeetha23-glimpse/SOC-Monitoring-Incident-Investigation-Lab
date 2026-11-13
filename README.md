@@ -17,7 +17,7 @@ The dashboard is saved in the author's Splunk Cloud account. Access may require 
 - `documentation/` — lab overview, validation notes, sample investigation
 - `evidence/` — add redacted screenshots from your own lab
 
-## Limitations
-Failed-logon monitoring (Event ID 4625), real-time alerting, public dashboard sharing, and confirmed malicious detections were not demonstrated as completed features. A public IP or HTTPS connection alone does not indicate malicious activity.
+## Dashboard Preview
+[Open SOC Lab Dashboard Preview](./evidence/SOC%20L1%20Lab%20%E2%80%93%20Demonstration%20Dashboard%20(synthetic%20sample%20data).html)
 
-Do not upload Splunk credentials, tokens, private keys, `passwords.conf`, or sensitive account details.
+

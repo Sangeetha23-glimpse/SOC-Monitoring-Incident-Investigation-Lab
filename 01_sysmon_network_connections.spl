@@ -1,0 +1,9 @@
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational earliest=-24h
+| rex field=_raw "Data Name='Image'>(?<Image>[^<]+)"
+| rex field=_raw "Data Name='DestinationIp'>(?<DestinationIp>[^<]+)"
+| rex field=_raw "Data Name='DestinationPort'>(?<DestinationPort>[^<]+)"
+| rex field=_raw "Data Name='User'>(?<User>[^<]+)"
+| rex field=_raw "<EventID>(?<EventID>\d+)</EventID>"
+| search EventID=3
+| table _time host Image DestinationIp DestinationPort User
+| sort - _time

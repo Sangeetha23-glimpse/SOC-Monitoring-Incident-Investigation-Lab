@@ -1,0 +1,12 @@
+index=main sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational earliest=-24h
+| rex field=_raw "Data Name='Image'>(?<Image>[^<]+)"
+| rex field=_raw "Data Name='DestinationIp'>(?<DestinationIp>[^<]+)"
+| rex field=_raw "Data Name='DestinationPort'>(?<DestinationPort>[^<]+)"
+| rex field=_raw "Data Name='DestinationHostname'>(?<DestinationHostname>[^<]*)"
+| rex field=_raw "Data Name='Protocol'>(?<Protocol>[^<]+)"
+| rex field=_raw "Data Name='Initiated'>(?<Initiated>[^<]+)"
+| rex field=_raw "<EventID>(?<EventID>\d+)</EventID>"
+| search EventID=3
+| search DestinationIp="142.251.222.174" OR DestinationIp="40.104.107.178"
+| table _time Image DestinationHostname DestinationIp DestinationPort Protocol Initiated
+| sort - _time

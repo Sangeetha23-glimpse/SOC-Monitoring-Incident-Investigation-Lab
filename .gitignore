@@ -1,0 +1,12 @@
+*.key
+*.pem
+*.p12
+*.pfx
+passwords.conf
+server.conf
+web.conf
+authentication.conf
+local/
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SOC L1 Lab – Demonstration Dashboard (synthetic sample data)</title>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--tx:#17212b;--mu:#5d6b7a;--ln:#d6dde5;--a:#2f6f9f;--b:#3a9a8b;--w:#c46a12;--bad:#b3261e;--ok:#2d7a4b;--chip:#e7edf3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141b;--card:#161f29;--tx:#e6edf3;--mu:#97a6b5;--ln:#2a3846;--a:#6db3e3;--b:#5cc5b4;--w:#f0a050;--bad:#ff8a80;--ok:#6fd49a;--chip:#223140}}
+:root[data-theme="dark"]{--bg:#0e141b;--card:#161f29;--tx:#e6edf3;--mu:#97a6b5;--ln:#2a3846;--a:#6db3e3;--b:#5cc5b4;--w:#f0a050;--bad:#ff8a80;--ok:#6fd49a;--chip:#223140}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:1280px;margin:0 auto;padding:14px}
+.ban{background:var(--w);color:#fff;border-radius:8px;padding:10px 14px;font-weight:600}
+:root[data-theme="dark"] .ban{color:#1b1206}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ban{color:#1b1206}}
+h1{font-size:21px;margin:14px 0 2px}.sub{color:var(--mu);margin:0 0 12px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
+select{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:6px 8px;font:inherit}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.c{background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:12px;min-width:0}
+.k .c b{display:block;font-size:28px;font-family:ui-monospace,Menlo,Consolas,monospace}.k .c span{color:var(--mu);font-size:12.5px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:10px;margin-top:10px}
+.c h2{font-size:14px;margin:0 0 8px}.c p.n{color:var(--mu);font-size:12px;margin:6px 0 0}
+.t{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{text-align:left;color:var(--mu);font-weight:600;border-bottom:1px solid var(--ln);padding:4px 6px;white-space:nowrap}
+td{padding:4px 6px;border-bottom:1px solid var(--ln);vertical-align:top;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;word-break:break-word}
+.u{cursor:pointer;color:var(--a);text-decoration:underline dotted}
+.ch{display:inline-block;background:var(--chip);border-radius:10px;padding:1px 7px;margin:1px 2px 1px 0;font-size:11px}.ch.h{background:var(--bad);color:#fff}
+.al{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.al div{flex:1 1 300px;border-left:4px solid var(--w);background:var(--card);border-radius:6px;padding:8px 10px}
+.al .hi{border-color:var(--bad)}.em{color:var(--mu);font-style:italic}
+svg text{fill:var(--mu);font-size:10px}.leg{font-size:12px;color:var(--mu)}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 8px}
+footer{color:var(--mu);font-size:12px;margin:14px 0 4px}
+</style></head><body><div class="w">
+<div class="ban">DEMONSTRATION DASHBOARD – synthetic sample data. This is not a live Splunk deployment, and none of these events came from a real computer.</div>
+<h1>SOC L1 Lab: Windows Security &amp; Sysmon Monitoring</h1>
+<p class="sub">Interactive rebuild of the 18-panel Splunk dashboard from my SOC Monitoring Lab project. Host SIM-LAB-01 · sample window 08:40–09:10 UTC · documentation IP ranges only.</p>
+<div class="bar"><label>Account <select id="acc"></select></label><span class="leg">Click any underlined account to filter every panel.</span></div>
+<div class="k" id="k"></div><div class="al" id="al"></div><div class="g" id="g"></div>
+<footer>Everything is computed in your browser from a small embedded sample set that mirrors the lab’s synthetic data generator (28 events). Query logic matches the project’s SPL: bursts are 5+ failures in 5 minutes; flags follow the B2 pattern list. In a real investigation, synthetic data is never evidence.</footer></div>
+<script>
+const T0=Date.UTC(2026,10,6,8,50,0)/1000,E=[],HOST='SIM-LAB-01';
+const add=(o,s)=>E.push({...o,t:T0+s});
+const SEC='wineventlog',SYS='sysmon',PS='C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
+const b64=s=>btoa(String.fromCharCode(...[...s].flatMap(c=>[c.charCodeAt(0),0])));
+const enc=b64("Write-Output 'SIMULATED_SAMPLE'; whoami; hostname");
+const lg=(s,u,ip,lt,ws,id=4624)=>add({i:SEC,id,u,ip,lt,ws},s);
+lg(-120,'sim_bob','-',2,HOST);lg(60,'SYSTEM','-',5,'-');lg(61,'DWM-1','-',2,'-');
+for(let i=0;i<12;i++)lg(30+5*i,'sim_user01','203.0.113.77',3,'KALI-SIM',4625);
+lg(95,'sim_user01','203.0.113.77',3,'KALI-SIM');
+[630,670,710].forEach(s=>lg(s,'sim_alice','192.0.2.15',3,'SIM-WKS-07',4625));lg(750,'sim_alice','192.0.2.15',3,'SIM-WKS-07');
+const pr=(s,u,img,cmd,par)=>add({i:SYS,id:1,u,img,cmd,par},s);
+pr(480,'sim_user01','C:\\Windows\\System32\\cmd.exe','cmd.exe /c start powershell','WINWORD.EXE');
+pr(485,'sim_user01',PS,'powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -EncodedCommand '+enc,'cmd.exe');
+pr(486,'sim_user01','C:\\Windows\\System32\\whoami.exe','whoami.exe','powershell.exe');
+pr(487,'sim_user01','C:\\Windows\\System32\\hostname.exe','hostname.exe','powershell.exe');
+pr(900,'sim_admin',PS,'powershell.exe -ExecutionPolicy Bypass -File C:\\IT\\inventory.ps1','explorer.exe');
+pr(1080,'sim_bob',PS,'powershell.exe','explorer.exe');
+add({i:SEC,id:4104,u:'sim_user01',txt:"Write-Output 'SIMULATED_SAMPLE'; whoami; hostname"},486);
+add({i:SEC,id:4104,u:'sim_admin',txt:'Get-ComputerInfo | Out-Null  # SIMULATED_SAMPLE inventory'},901);
+const RX={EncodedCommand:/\s-(e|ec|enc|encodedcommand)\s+[A-Za-z0-9+/=]{16,}/i,HiddenWindow:/\s-w(indowstyle)?\s+hidden/i,ExecutionPolicyBypass:/\s-(ep|exec\w*)\s+bypass/i,DownloadOrExecCradle:/(downloadstring|downloadfile|invoke-webrequest|invoke-restmethod|net\.webclient|start-bitstransfer|invoke-expression|\siex\s)/i};
+E.forEach(e=>{if(e.cmd&&/(powershell|pwsh)\.exe$/i.test(e.img)){e.ps=1;e.fl=Object.keys(RX).filter(k=>RX[k].test(e.cmd));if(/(winword|excel|powerpnt|outlook|wscript|cscript|mshta|wmiprvse)\.exe/i.test(e.par))e.fl.push('SuspiciousParent')}});
+E.sort((a,b)=>a.t-b.t);
+const $=id=>document.getElementById(id),fmt=t=>new Date(t*1000).toISOString().slice(11,19),bn=t=>Math.floor(t/300)*300;
+const SYSACC=u=>['SYSTEM','LOCAL SERVICE','NETWORK SERVICE','ANONYMOUS LOGON'].includes(u)||/^(DWM|UMFD)-/.test(u);
+const MEAN={4624:'Successful logon',4625:'Failed logon',4104:'PowerShell script block'};
+let A='all';
+const users=['all',...[...new Set(E.map(e=>e.u))].filter(u=>!SYSACC(u)).sort()];
+$('acc').innerHTML=users.map(u=>`<option value="${u}">${u==='all'?'All accounts':u}</option>`).join('');
+$('acc').onchange=e=>{A=e.target.value;draw()};
+const ua=u=>`<span class="u" data-u="${u}">${u}</span>`;
+const tbl=(cols,rows)=>rows.length?`<div class="t"><table><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`:'<p class="em">No results found.</p>';
+const chips=f=>f.length?f.map(x=>`<span class="ch ${f.length>1||x!=='ExecutionPolicyBypass'?'h':''}">${x}</span>`).join(''):'<span class="ch">none</span>';
+function bars(rows,keys,cols){const bins=[];for(let t=bn(T0-600);t<=bn(T0+1200);t+=300)bins.push(t);
+ const dat=bins.map(t=>keys.map(k=>rows.filter(e=>bn(e.t)===t&&k.f(e)).length));const mx=Math.max(1,...dat.map(d=>d.reduce((a,b)=>a+b,0)));
+ const W=440,H=150,p=24,bw=(W-p)/bins.length;let s=`<svg viewBox="0 0 ${W} ${H+16}" width="100%" role="img">`;
+ [0,.5,1].forEach(f=>{const y=H-f*(H-10);s+=`<line x1="${p}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--ln)"/><text x="0" y="${y+3}">${Math.round(mx*f)}</text>`});
+ dat.forEach((d,i)=>{let y=H;d.forEach((v,j)=>{const h=v/mx*(H-10);y-=h;if(v)s+=`<rect x="${p+i*bw+4}" y="${y}" width="${bw-8}" height="${h}" fill="${cols[j]}" rx="2"><title>${fmt(bins[i])} ${keys[j].n}: ${v}</title></rect>`});s+=`<text x="${p+i*bw+4}" y="${H+12}">${fmt(bins[i]).slice(0,5)}</text>`});
+ return s+'</svg><div class="leg">'+keys.map((k,j)=>`<i style="background:${cols[j]}"></i>${k.n}`).join('')+'</div>';}
+function draw(){
+ const V=E.filter(e=>A==='all'||e.u===A||SYSACC(e.u)&&A==='all');
+ const fails=V.filter(e=>e.id===4625),logons=V.filter(e=>(e.id===4624||e.id===4625)&&!SYSACC(e.u)&&(e.id===4625||[2,3,7,10,11].includes(e.lt)));
+ const succ=logons.filter(e=>e.id===4624),psl=V.filter(e=>e.ps),flg=psl.filter(e=>e.fl.length);
+ const by=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);(m[k]=m[k]||[]).push(e)});return m};
+ const bursts=[];Object.values(by(fails,e=>[bn(e.t),e.u,e.ip])).forEach(g=>{if(g.length>=5)bursts.push([fmt(bn(g[0].t)),ua(g[0].u),g[0].ip,g.length])});
+ const saf=[];Object.values(by(logons,e=>e.u)).forEach(g=>{const f=g.filter(e=>e.id===4625),s=g.filter(e=>e.id===4624);if(f.length&&s.length&&s.at(-1).t>f.at(-1).t)saf.push([ua(g[0].u),f.length,s.length,fmt(f.at(-1).t),fmt(s.at(-1).t)])});
+ $('k').innerHTML=[['Total events',V.length],['Failed logons (4625)',fails.length],['Successful logons (4624)',succ.length],['PowerShell launches',psl.length],['PowerShell with suspicious flags',flg.length]].map(([l,n])=>`<div class="c"><b>${n}</b><span>${l}</span></div>`).join('');
+ $('al').innerHTML=(bursts.length?bursts.map(b=>`<div class="hi"><b>High · failed-logon burst</b><br>${b[3]} failures for ${b[1]} from ${b[2]} in one 5-minute window (alert threshold: 5).</div>`).join(''):'')+
+  (saf.length?`<div><b>Medium · success after failures</b><br>${saf.length} account(s) logged on after failed attempts. Context decides the verdict.</div>`:'')+
+  flg.filter(e=>e.fl.length>1).map(e=>`<div class="hi"><b>High · stacked PowerShell indicators</b><br>${e.u}: ${e.fl.join(', ')}.</div>`).join('')||'<div class="em">No alerts for this selection.</div>';
+ const P=[];const card=(t,h,n)=>P.push(`<div class="c"><h2>${t}</h2>${h}${n?`<p class="n">${n}</p>`:''}</div>`);
+ card('Event activity over time (5 min)',bars(V,[{n:'wineventlog',f:e=>e.i===SEC},{n:'sysmon',f:e=>e.i===SYS}],['var(--a)','var(--b)']),'Security, PowerShell and Sysmon events by index.');
+ const ids=by(V,e=>e.i+'|'+e.id);card('Events by Event ID',tbl(['Index','ID','Count','Meaning'],Object.entries(ids).map(([k,g])=>{const[i,id]=k.split('|');return[i,id,g.length,MEAN[id]||'Sysmon: process created']})));
+ card('Failed logons over time (by account)',bars(fails,[...new Set(fails.map(e=>e.u))].map(u=>({n:u,f:e=>e.u===u})),['var(--bad)','var(--w)','var(--a)']));
+ card('Failure bursts: 5+ in 5 minutes',tbl(['Window start','Account','Source','Failures'],bursts),'Alert rule A3.');
+ card('Failed logons by account and source',tbl(['Account','Source','Type','Failures','First','Last'],Object.values(by(fails,e=>e.u+e.ip)).map(g=>[ua(g[0].u),g[0].ip,g[0].lt,g.length,fmt(g[0].t),fmt(g.at(-1).t)])),'SubStatus 0xc000006a: right account, wrong password.');
+ card('Accounts with failures then a successful logon',tbl(['Account','Failures','Successes','Last failure','Last success'],saf),'A success after failures is a prompt to investigate, not a verdict.');
+ card('PowerShell with suspicious indicators',tbl(['Time','User','Parent','Flags','Command line'],flg.map(e=>[fmt(e.t),ua(e.u),e.par,chips(e.fl),e.cmd.length>110?e.cmd.slice(0,110)+'…':e.cmd])),'One flag alone is weak; stacked flags plus an odd parent chain deserve review.');
+ card('PowerShell parent processes',tbl(['Parent','User','Launches'],Object.values(by(psl,e=>e.par+e.u)).map(g=>[g[0].par,ua(g[0].u),g.length])));
+ card('Script block content (Event ID 4104)',tbl(['Time','User','Decoded script text'],V.filter(e=>e.id===4104).map(e=>[fmt(e.t),ua(e.u),e.txt])),'Shows what PowerShell actually ran, even when the command line was encoded.');
+ card('Host and user: Sysmon process activity',tbl(['Host','User','Processes','Distinct programs','Last activity'],Object.values(by(V.filter(e=>e.i===SYS),e=>e.u)).map(g=>[HOST,ua(g[0].u),g.length,new Set(g.map(e=>e.img)).size,fmt(g.at(-1).t)])));
+ card('Host and user: successful logons',tbl(['Host','User','Logons','Types','Last logon'],Object.values(by(succ,e=>e.u)).map(g=>[HOST,ua(g[0].u),g.length,[...new Set(g.map(e=>e.lt))].join(','),fmt(g.at(-1).t)])),'System and DWM/UMFD accounts excluded.');
+ card('Investigation findings (example, synthetic)',`<p><b>INC-001 (sample):</b> sim_user01, 12 failures in about 55 s from 203.0.113.77, then one success. Verdict: likely true positive, medium confidence; source unverified.</p><p><b>Contrast:</b> sim_alice, 3 failures over 80 s from a known workstation: benign pending user confirmation.</p><p><b>INC-002 (sample):</b> hidden + bypass + encoded PowerShell under cmd.exe under WINWORD.EXE; decoded text is harmless. Likely true positive on behaviour. The admin inventory script has one flag and is allow-list material.</p>`,'Written for the demo, not a real finding.');
+ const fr=by(V,e=>e.i);card('Data ingestion freshness',tbl(['Index','Host','Events','Newest event (UTC)'],Object.entries(fr).map(([i,g])=>[i,HOST,g.length,fmt(g.at(-1).t)])),'Sample data, not a live feed.');
+ $('g').innerHTML=P.join('');
+ document.querySelectorAll('.u').forEach(el=>el.onclick=()=>{A=el.dataset.u;$('acc').value=A;draw()});
+}
+draw();
+</script></body></html>
